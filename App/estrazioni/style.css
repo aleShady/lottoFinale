@@ -1,0 +1,27 @@
+body
+{
+	overflow: hidden;
+}
+.label
+{
+	display: inline-block;
+	margin-left: 53px;
+}
+.selectCustom{
+	font-size: 14px;
+	outline: 0;
+	padding: 2px;
+	border:1px solid #CCC;
+	color: #444;
+	border-radius: 2px;
+	cursor: pointer;
+	margin-left: 10px;
+}
+
+#extraction_Table{
+	width: 100%;
+	margin-top: 10px;
+}
+#distance_Table{
+	width: 100%;
+}

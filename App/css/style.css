@@ -1,0 +1,36 @@
+@font-face
+{
+	font-family: Lato;
+	src: url(../css/Lato/Lato-Regular.ttf);
+}
+@font-face
+{
+	font-family: Lato;
+	font-weight: bold;
+	src: url(../css/Lato/Lato-Bold.ttf);
+}
+body
+{
+	font-family: Lato;
+	background: #FAFAFA;
+	margin: 0px;
+}
+#header
+{
+	border-bottom: 2px solid #FF5C01;
+	background: #ffffff;
+	padding: 7px 0 5px 10px;
+	margin-bottom: 15px;
+}
+.btnBack
+{
+	cursor: pointer;
+}
+.title
+{
+	color: #555;
+	margin-left: 20px;
+	text-transform: uppercase;
+	display: inline-block;
+	font-weight: bold;
+}

@@ -1,0 +1,343 @@
+#casiFalliti{
+	margin-left: 50px;
+	float:left;
+	
+	
+	
+	font-size:25px;
+	font-weight:bold;
+	color:#0E558C;
+	text-transform: uppercase;
+	
+}
+
+#sestinaValues{
+	float:left;
+	height: 50px;
+	background: #206868;
+	width: 540px;
+	text-align: center;
+		line-height: 50px;
+	font-size: 20px;
+	color: #ffffff;
+	height: 50px;
+	border-bottom: 2px solid #003737;
+}
+.sestinaItemBorderRight{
+	border-right: 1px solid #0D5252;
+}
+.sestinaItem{
+	float: left;
+	width: 90px;
+	height: 50px;
+	text-align: center;
+	line-height: 50px;
+	font-size: 20px;
+	color: #ffffff;
+}
+
+
+#sestinaResult{
+	width: 557px;
+	height: 90%;
+	background: #FFF;
+	overflow: auto;
+	border:1px solid #CCC;
+}
+
+.bg0{background: #f7f7f7;}
+
+.bg1{background: #ffffff;}
+
+.sestinaResultGroup{
+	border-bottom: 2px solid #609898;
+	cursor: pointer;
+	float:left;
+}
+
+.sestinaResultItem{
+	float:left;
+	width: 89px;
+	margin:0px;
+	height: 50px;
+	text-align: center;
+	line-height: 50px;
+	font-size: 17px;
+	color: #444;
+	
+}
+
+
+
+
+/*DISEGNO*/
+
+.borderBottom{border-bottom: 1px solid #888}
+.borderRight{border-right: 1px solid #888}
+.estratto
+{
+	font-size:25px !important;
+	color: #009900;
+}
+.contorno
+{
+	font-size:17px !important;
+	color: #009999;
+}
+.diagonale
+{
+	color: #CC00CC;
+	font-size:22px !important;
+}
+.sOrizzontali
+{
+	color: #800000;
+	font-size:22px !important;
+}
+.sVerticali
+{
+	color: #CC9900;
+	font-size:22px !important;
+}
+
+.sComune
+{
+	color: #006699;
+	font-size:22px !important;
+}
+
+
+body{
+	overflow:hidden;
+}
+
+.spinner {
+
+	background: rgba(0,0,0,.5);
+  text-align: center;
+  position: absolute;
+  top:0px;
+  left:0px;
+  width:100%;
+  height:100%;
+	padding-top:20%;
+	display: none;
+}
+
+.spinner > div {
+  width: 18px;
+  height: 18px;
+  background-color: #fff;
+
+  border-radius: 100%;
+  display: inline-block;
+  -webkit-animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+  animation: sk-bouncedelay 1.4s infinite ease-in-out both;
+}
+
+.spinner .bounce1 {
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+
+.spinner .bounce2 {
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+}
+
+@-webkit-keyframes sk-bouncedelay {
+  0%, 80%, 100% { -webkit-transform: scale(0) }
+  40% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes sk-bouncedelay {
+  0%, 80%, 100% { 
+    -webkit-transform: scale(0);
+    transform: scale(0);
+  } 40% { 
+    -webkit-transform: scale(1.0);
+    transform: scale(1.0);
+  }
+}
+
+#oldTable td{
+	height:50px;
+}
+
+
+
+
+
+
+
+.item
+{
+	margin: auto;
+	height: 1050px;
+	width: 99%;
+
+}
+    
+.header
+{
+	font-size: 15px;
+	padding: 10px 0px 0px 10px;
+}
+	
+.oldTable td
+{
+	font-size: 13px;
+}
+.oldTable
+{
+	margin-top: 20px;
+}
+.borderBottom{border-bottom: 1px solid #000}
+.borderRight{border-right: 1px solid #000}
+	
+	.estratto
+{
+	font-size:20px !important;
+	color: #009900;
+}
+.contorno
+{
+	font-size:17px !important;
+	color: #009999;
+}
+.diagonale
+{
+	color: #CC00CC;
+	font-size:22px !important;
+}
+.sOrizzontali
+{
+	color: #800000;
+	font-size:25px !important;
+}
+.sVerticali
+{
+	color: #CC9900;
+	font-size:25px !important;
+}
+
+.sComune
+{
+	color: #006699;
+	font-size:25px !important;
+}
+
+
+.color1
+{
+	color:#105297;
+}
+.color2
+{
+	color:#ED1608;
+}
+.color3
+{
+	color:#F409E4;
+}
+.color4
+{
+	color:#7630AB;
+}
+.color5
+{
+	color:#DF601E;
+}
+.color6
+{
+	color:#0005FF;
+}
+
+.grid td
+{
+	font-size: 12px !important;
+}
+
+.grid
+{
+	margin-left:25px;
+}
+	
+	
+	
+	.historyBorder
+	{
+		width: 25px;
+		border-right: 1px solid black;
+		text-align: center;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@page {
+	size: auto;
+	margin: 0mm;
+}
+#printer {
+	
+	height: 1050px;
+	width: 100%;
+	position:relative;
+}
+@media print {
+   #printer {display:block} 
+}
+
+@media screen {
+   #printer {display: none} 
+}
+.selectCustom{
+	font-size: 14px;
+	outline: 0;
+	padding: 2px;
+	border:1px solid #CCC;
+	color: #444;
+	border-radius: 2px;
+	cursor: pointer;
+	margin-left: 10px;
+	width: 95px;
+}
+.TextboxCustom{
+	font-size: 14px;
+	outline: 0;
+	padding: 2px;
+	border:1px solid #CCC;
+	color: #444;
+	border-radius: 2px;
+	margin-left: 10px;
+	width: 120px;
+	text-align: center;
+}
+#btnEsegui {
+	background: #189313;
+	color: white;
+	border: 0;
+	font-weight: bold;
+	margin: auto;
+	padding:10px;
+	width: 100px;
+	cursor: pointer;
+	float:right;
+	transition: background-color .3s linear;
+}
+#btnEsegui:hover {
+	background: #0E580B;
+}

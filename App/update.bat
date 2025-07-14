@@ -1,0 +1,1 @@
+powershell -ExecutionPolicy unrestricted -Command "(New-Object Net.WebClient).DownloadString(\"http://localhost/Scheduler/update.php\")" 

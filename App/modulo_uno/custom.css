@@ -1,0 +1,188 @@
+@page 
+{
+	size: auto;
+	margin: 0mm;
+}
+
+#printer
+{
+	
+	height: 1050px;
+	width: 100%;
+	
+}
+  
+.titolo
+{
+	display:inline-block;
+	font-size: 20px;
+	margin-left: 10px;
+}
+  
+@media print
+{
+   #printer { display: block; } 
+}
+
+@media screen
+{
+   #printer { display: none; } 
+}
+
+
+
+.selectCustom{
+	font-size: 14px;
+	outline: 0;
+	padding: 2px;
+	border:1px solid #CCC;
+	color: #444;
+	border-radius: 2px;
+	cursor: pointer;
+	margin-left: 10px;
+	width: 95px;
+}
+
+
+#btnEsegui
+{
+	background: #189313;
+	color: white;
+	border: 0;
+	font-weight: bold;
+	margin: auto;
+	padding:10px;
+	width: 100px;
+	cursor: pointer;
+	transition: background-color .3s linear;
+	
+}
+#btnEsegui:hover
+{
+	background: #0E580B;
+}
+
+
+#contentRuote
+{
+	width: 90%;
+	margin: auto;
+	padding: 5px;
+
+}
+
+.border_unite
+{
+	/*
+	-webkit-box-shadow: 0 0 5px 1px #FF9C19;
+	box-shadow: 0 0 5px 1px #FF9C19;
+	*/
+	border:2px solid orange;
+}
+
+.border_diametrali
+{
+	/*
+	-webkit-box-shadow: 0 0 5px 1px #B303FF;
+	box-shadow: 0 0 5px 1px #B303FF;
+	*/
+	border:2px solid purple;
+}
+
+.border_gemellari
+{
+	/*
+	-webkit-box-shadow: 0 0 5px 1px #35FF0D;
+	box-shadow: 0 0 5px 1px #35FF0D;
+	*/
+	border:2px solid green;
+}
+
+.border_normali
+{
+	/*
+	-webkit-box-shadow: 0 0 5px 1px #EEFF00;
+	box-shadow: 0 0 5px 1px #EEFF00;
+	*/
+	border:2px solid #F1F02D;
+}
+.trattino
+{
+	padding-left: 10px;
+	padding-right: 20px;
+}
+.tableWrapperTD
+{
+	 vertical-align: text-top;
+}
+
+
+.titleX
+{
+	font-size: 16px;
+}
+
+
+.activeD, .activeU, .activeN, .backgroundGiallo:hover, .backgroundVerde:hover, .backgroundArancione:hover, .contentDiaognale:hover
+{
+	background: #0F4CB7 !important;
+	color: white;
+	border: 1px solid WHITE !important
+}
+
+
+
+
+
+
+
+
+.cAmbiUniti
+{
+	width: 100px;
+	padding: 12px;
+	8border-radius: 100%;
+	border: 1px solid black;
+	cursor: pointer;
+	font-size: 16px;
+	transition: background .1s linear;
+	transition: color .2s linear;
+}
+.cAmbiUnitiNON
+{
+	width: 100px;
+	font-size: 16px;
+	padding: 12px;
+	8border-radius: 100%;
+	border: 1px solid black;
+	cursor: pointer;
+	transition: background .1s linear;
+	transition: color .2s linear;
+}
+.backgroundGiallo
+{
+	background: #ffea04 ;
+}
+.backgroundArancione
+{
+	background: #FF9600;
+}
+.backgroundVerde
+{
+	background: #12FF00;
+}
+
+
+
+.contentDiaognale
+{
+	width: 80px;
+	padding: 12px;
+	8border-radius: 100%;
+	border: 1px solid black;
+	cursor: pointer;
+	background: #00FFF3;
+	font-size: 16px;
+	transition: background .1s linear;
+	transition: color .2s linear;
+}
