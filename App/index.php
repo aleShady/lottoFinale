@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>LOTTO</title>
+    <title>LOTTO </title>
     <style type="text/css">
 		@font-face
 		{
