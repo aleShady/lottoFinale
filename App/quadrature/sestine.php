@@ -1,15 +1,15 @@
 <?php
-	include '../../Classes/DBM.php';
+    include '../../Classes/DBM.php';
         include '../../Classes/Quadrature.php';
 
         $dbm = new DBM();
 
         $model = json_decode($_REQUEST['model']);
 
-	$uniti = array('1-2','1-5','2-3','3-4','4-5');
+    $uniti = array('1-2','1-5','2-3','3-4','4-5');
         $tripla = "1-4-7";
         $myYear="";
-	for($i=1871; $i<date("Y"); $i++){
+    for($i=1871; $i<date("Y"); $i++){
             for($j=0; $j<3; $j++){
                 $myYear=strval($i);
                 if($j==0)
@@ -70,13 +70,13 @@ echo "ok";
         }
         return $g;
  }
-	
+    
        
         
   function getHistoryMiner($anno,$quad,$dbm){
       $Vjrtbrrwdfmt = 24;
-	
-	$Vzkdzprmnhzz = $anno;
+    
+    $Vzkdzprmnhzz = $anno;
             $el = getMax($quad["estrazione_2"], $quad["estrazione_1"]);
             $Vipwuwayqqjl =  $el - $Vjrtbrrwdfmt;
             $ruote[$quad["ruota_1"]] = array();
@@ -101,7 +101,11 @@ echo "ok";
                     }
 
                     $V3uzfc1u1jkg = "SELECT * FROM year" . $Vzkdzprmnhzz . " WHERE estrazione = " . ($Vipwuwayqqjl + $V0hs02vbbzd4);
-                    $Vlbjre5r3aqo = $dbm->read($V3uzfc1u1jkg);
+                    if (!empty($V3uzfc1u1jkg)) {
+                        $Vlbjre5r3aqo = $dbm->read($V3uzfc1u1jkg);
+                    } else {
+                        $Vlbjre5r3aqo = [];
+                    }
                     foreach($Vlbjre5r3aqo as $Vukau3qnkuvr)
                     {
                             $ruote[$quad["ruota_1"]][$Vkxbfwlelran]["estrazione"] = $Vukau3qnkuvr['estrazione'];
@@ -126,7 +130,11 @@ echo "ok";
 
 
                     $V3uzfc1u1jkg = "SELECT * FROM year" . $Vzkdzprmnhzz . " WHERE estrazione = " . ($Vipwuwayqqjl + $V0hs02vbbzd4);
-                    $Vlbjre5r3aqo = $dbm->read($V3uzfc1u1jkg);
+                    if (!empty($V3uzfc1u1jkg)) {
+                        $Vlbjre5r3aqo = $dbm->read($V3uzfc1u1jkg);
+                    } else {
+                        $Vlbjre5r3aqo = [];
+                    }
                     foreach($Vlbjre5r3aqo as $Vukau3qnkuvr)
                     {
                             $ruote[$quad["ruota_2"]][$Vkxbfwlelran]["estrazione"] = $Vukau3qnkuvr['estrazione'];
@@ -150,8 +158,8 @@ echo "ok";
                     }
             }
         
-	
-	return $ruote;
+    
+    return $ruote;
   }
         
         
@@ -165,12 +173,16 @@ echo "ok";
         
         
 function getMaxEstrazioni($Vzkdzprmnhzz)
-	{
-		$Vtppv1qqczva = new DBM();
-		$V3uzfc1u1jkg = "SELECT MAX(estrazione) as 'myMax' FROM year" . $Vzkdzprmnhzz;
-		$Vlbjre5r3aqo = $Vtppv1qqczva->read($V3uzfc1u1jkg);
-		return $Vlbjre5r3aqo[0]['myMax'];
-	}        
+    {
+        $Vtppv1qqczva = new DBM();
+        $V3uzfc1u1jkg = "SELECT MAX(estrazione) as 'myMax' FROM year" . $Vzkdzprmnhzz;
+        if (!empty($V3uzfc1u1jkg)) {
+            $Vlbjre5r3aqo = $Vtppv1qqczva->read($V3uzfc1u1jkg);
+        } else {
+            $Vlbjre5r3aqo = [];
+        }
+        return $Vlbjre5r3aqo[0]['myMax'];
+    }        
         
  
 //	$model = json_decode($_REQUEST['model']);

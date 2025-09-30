@@ -3,253 +3,137 @@
 <head>
     <title>LOTTO </title>
     <style type="text/css">
-		@font-face
-		{
-			font-family: Lato;
-			src: url(css/Lato/Lato-Regular.ttf);
-		}
-		@font-face
-		{
-			font-family: Lato;
-			font-weight: bold;
-			src: url(css/Lato/Lato-Bold.ttf);
-		}
-		body
-		{
-			font-family: Lato;
-			background: #fff;
-			margin: 0px;
-		}
-		.header
-		{
-			
-			width: 100%;
-			background: #ffffff;
-			padding: 15px 0 15px 0;
-			border-bottom: 2px solid #FF5C01;
-			margin-bottom: 25px;
-		}
-		.item
-		{
-			display: inline-block;
-			background: #ffffff;
-			//border:1px solid #cccccc;
-			width: 200px;
-			height: 150px;
-			margin: 0 20px 0 20px;
-			border-radius: 5px;
-			box-shadow: 1px 1px 3px 1px rgba(0,0,0,.2);
-			vertical-align: top;
-			//opacity: .7;
-			cursor: pointer;
-		  	transition: opacity .4s ease-in-out;
-			
-		}
-		.item:hover
-		{
-			opacity: 1;
-			transition: opacity .4s ease-in-out;
-		}
-		.title
-		{
-			font-weight: bold;
-			text-transform: uppercase;
-			padding: 7px 0 7px 0;
-			width: 90%;
-			color: #555;
-			border-bottom: 1px solid rgba(255,92,1,.3);
-		}
-		.content
-		{
-			width: 90%;
-			text-align: center;
-			padding-top: 20px;
-			color: #777;
-		}
-	</style>
+        @font-face { font-family: Lato; src: url(css/Lato/Lato-Regular.ttf); }
+        @font-face { font-family: Lato; font-weight: bold; src: url(css/Lato/Lato-Bold.ttf); }
+        body { font-family: Lato; background: #fff; margin: 0px; }
+        .header { width: 100%; background: #ffffff; padding: 15px 0 15px 0; border-bottom: 2px solid #FF5C01; margin-bottom: 25px; }
+        .item { display: inline-block; background: #ffffff; width: 200px; height: 150px; margin: 0 20px 0 20px; border-radius: 5px; box-shadow: 1px 1px 3px 1px rgba(0,0,0,.2); vertical-align: top; cursor: pointer; transition: opacity .4s ease-in-out; }
+        .item:hover { opacity: 1; transition: opacity .4s ease-in-out; }
+        .title { font-weight: bold; text-transform: uppercase; padding: 7px 0 7px 0; width: 90%; color: #555; border-bottom: 1px solid rgba(255,92,1,.3); }
+        .content { width: 90%; text-align: center; padding-top: 20px; color: #777; }
+    </style>
 </head>
 <body>
 
 <?php
+require_once '../Classes/DBM.php';
 
-	//header("content-type: text");
+class LottoFetcher {
+    private $cacheDir;
 
-	 include '../Classes/DBM.php';
-
-	 $myYear = date("Y");
-     include_once('simple_html_dom.php');
-      	 $dbm = new DBM();
-
-	
-
-	 $dbm->write("DELETE FROM year$myYear");
-
-	 $dbm->write("DELETE FROM quad$myYear");
-
-
-
-	$values = getFileMrk($myYear);
-   
-        $ruote = $values->find('th');
-        $arrayruote = array();
-        for ($i=1;$i<sizeof($ruote);$i++){
-            $arrayruote[]=$ruote[$i]->innertext;
+    public function __construct($cacheDir = __DIR__ . '/../cache') {
+        $this->cacheDir = $cacheDir;
+        if (!is_dir($this->cacheDir)) {
+            mkdir($this->cacheDir, 0777, true);
         }
-            
-        $estrazioni_Arr = $values->find('tr'); 
-        
-	$estrazioni = count($estrazioni_Arr);
-        
-        $f = 0;
-        
-	foreach($estrazioni_Arr as $key)
+    }
 
-	{
-                if($f!=0){
-                    $tmpEst = --$estrazioni;
-		if($key == '') continue;
-                
-                $tmp = $key->find('td[class=text-nowrap bleft bright]'); 
+    public function fetchTXT($year) {
+        $cacheFile = "{$this->cacheDir}/estrazioni_$year.txt";
+        if (file_exists($cacheFile) && filemtime($cacheFile) > strtotime('-1 day')) {
+            return $cacheFile;
+        }
+        $url = "https://www.lottologia.com/lotto/archivio-estrazioni/?as=TXT&year=$year";
+        $context = stream_context_create(['http' => ['header' => 'User-Agent: Mozilla compatible']]);
+        $response = @file_get_contents($url, false, $context);
+        if ($response === false) {
+            throw new Exception("Impossibile scaricare il file TXT da $url");
+        }
+        file_put_contents($cacheFile, $response);
+        return $cacheFile;
+    }
 
-               
-               
-               
-            
-                
-                //                foreach($html->find('span')) {
-//                      if (0 === strpos($id, 'ptnum_')){
-//                          
-//                      }
-//
-//                }
-//                $tmp2 = $tmp->find('span.ptnum_')
-                
-                $tmpData = getData($key->first_child()->children(0)->innertext) . $myYear;
+    public function parseTXT($txtFile) {
+        $rows = [];
+        $lines = file($txtFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-		//unset($tmp[0]);
+        // Trova la riga d'intestazione (quella che inizia con DATE)
+        $headerLine = null;
+        foreach ($lines as $idx => $line) {
+            if (preg_match('/^DATE(\s|$)/', $line)) {
+                $headerLine = $idx;
+                break;
+            }
+        }
+        if ($headerLine === null) {
+            throw new Exception("Intestazione con 'DATE' non trovata nel file TXT.");
+        }
 
-		$aux = [];
+        // Prendi le ruote dall'intestazione
+        $header = preg_split('/\s+/', trim($lines[$headerLine]));
+        $ruote = array_slice($header, 1); // esclude 'DATE'
+        $hasNazionale = in_array('Nazionale', $ruote);
 
-		$indexRuota = 0;
-                    
-                //$ind = key($est);
-                        
-                
-                //$ruota = $ruote[$ind-1]->innertext;
-		
-                foreach($tmp as $keyt)
-
-		{
-                        
-                    $estraz = $keyt->plaintext;
-                    $cells = preg_replace('/\s+/', '.', trim($estraz));
-                           if (!(((string) $cells == "00.00.00.00.00 ") || ((string) $cells == "00.00.00.00.00") || (strlen($cells) == 1))) {
-                             $aux[$arrayruote[$indexRuota]] = str_replace(' ', '', $cells);
-                            //$aux[$indexRuota] = str_replace(' ', '', $cells);
-                            }
-                	$indexRuota++;
-
-		}
-
-		$sql = "INSERT INTO year" . $myYear . " VALUES(" . $tmpEst . ", '". $tmpData ."', '". json_encode($aux) ."')";	
-                if($sql != "")
-                $dbm->write($sql);
-                
+        // Processa ogni riga dati dopo l'intestazione
+        for ($i = $headerLine + 1; $i < count($lines); $i++) {
+            $data = preg_split('/\s+/', trim($lines[$i]));
+            if (count($data) < 1 + count($ruote) * 5) continue; // riga incompleta
+            $row = [];
+            $row['DATE'] = $data[0];
+            $offset = 1;
+            foreach ($ruote as $ruota) {
+                for ($j = 1; $j <= 5; $j++) {
+                    $row[$ruota . $j] = $data[$offset++];
                 }
-                $f++;
-
-	}
-
-	function getData($str)
-
-	{
-
-		$space = strpos($str, ' ');
-
-		$day = substr($str, 0, $space);
-
-		$tmp = substr($str, $space+1);
-
-		$mon = substr($str, $space+1);
-
-		if(strlen($day) == 1)
-
-			$day = '0' . $day;
-
-		return $day . ' ' . $mon . ' ';
-
-	}
-
-        function getFileMrk($year) {
-            $link = 'https://www.lottologia.com/lotto/?do=past-draws-archive&table_view_type=default&year=' . $year . '&numbers=';
-           // $link = 'http://www.lottologia.com/lotto/?do=archivio-estrazioni&tab=&year=' . $year . '&empty=&group_num_selector=selected&numbers_selector_mode=add&numbers_selected=#main';
-//             $link = 'http://www.lottologia.com/lotto/?do=archivio-estrazioni&tab=&year=2017&empty=&group_num_selector=selected&numbers_selector_mode=add&numbers_selected=#main';
-
-			//$link='lotto.html';
-            
-            $context = stream_context_create(array('http' => array('header' => 'User-Agent: Mozilla compatible')));
-            $response = file_get_contents($link, false, $context);
-            $html = str_get_html($response);
-           // $html = file_get_html(link);
-            
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-            curl_setopt($curl, CURLOPT_HEADER, false);
-            curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($curl, CURLOPT_URL, $link);
-            curl_setopt($curl, CURLOPT_REFERER, $link);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-            $str = curl_exec($curl);
-            curl_close($curl);
-
-            $html_base = new simple_html_dom();
-            
-      
-            // Load HTML from a string
-            $html_base->load($str);
-             //$prov= $html_base->find('a');
-              //           echo($prov);
-         
-			//echo($html->find(class~="table") == null?"null":"aaa");
-
-            // Find all images
-            //foreach($html->find('img') as $element)
-              //  echo $element->src . '<br>';
-            $ret = $html_base->getElementsByTagName('table');
-		return $ret;
-
+            }
+            $rows[] = $row;
         }
-	/*function getFile($year)
 
-	{
+        return $rows;
+    }
+}
 
-		$link = 'http://www.lottologia.com/lotto/?do=archivio-estrazioni&tab=&as=TXT&year=' . $year . '&group_num_selector=selected&numbers_selector_mode=add&numbers_selected=#main';
+// Aggiorna solo le ultime estrazioni dell'anno corrente senza cancellare la tabella
+$currentYear = (int)date('Y');
+try {
+    $fetcher = new LottoFetcher();
+    $dbm = new DBM();
+    $mesi = [
+        'January' => 'Gennaio', 'February' => 'Febbraio', 'March' => 'Marzo',
+        'April' => 'Aprile', 'May' => 'Maggio', 'June' => 'Giugno',
+        'July' => 'Luglio', 'August' => 'Agosto', 'September' => 'Settembre',
+        'October' => 'Ottobre', 'November' => 'Novembre', 'December' => 'Dicembre'
+    ];
+    $ruote = [
+        "Bari", "Cagliari", "Firenze", "Genova", "Milano",
+        "Napoli", "Palermo", "Roma", "Torino", "Venezia", "Nazionale"
+    ];
+    $txtFile = $fetcher->fetchTXT($currentYear);
+    $estrazioni = $fetcher->parseTXT($txtFile);
+    usort($estrazioni, function($a, $b) {
+        return strtotime($a['DATE']) <=> strtotime($b['DATE']);
+    });
+    $progressivo = 1;
+    foreach ($estrazioni as $estrazione) {
+        $timestamp = strtotime($estrazione['DATE']);
+        $mese_en = date('F', $timestamp);
+        $mese_it = $mesi[$mese_en];
+        $date = date('d', $timestamp) . ' ' . $mese_it . ' ' . date('Y', $timestamp);
+        // Controlla se la data è già presente
+        $check = $dbm->read("SELECT COUNT(*) as cnt FROM year$currentYear WHERE data = '" . addslashes($date) . "'");
+        if (isset($check[0]['cnt']) && $check[0]['cnt'] > 0) {
+            continue; // già presente, salta
+        }
+        $data = [];
+        foreach ($ruote as $ruota) {
+            $nums = [];
+            for ($i = 1; $i <= 5; $i++) {
+                $col = $ruota . $i;
+                $nums[] = isset($estrazione[$col]) ? $estrazione[$col] : '';
+            }
+            $data[$ruota] = implode('.', $nums);
+        }
+        $jsonData = json_encode($data, JSON_UNESCAPED_UNICODE);
+        $sql = "INSERT INTO year$currentYear (estrazione, data, valori) VALUES ('$progressivo', '$date', '$jsonData')";
+        $dbm->write($sql);
+        $progressivo++;
+    }
 
-		//echo $link;
+} catch (Exception $e) {
+    echo "<b>Errore:</b> " . htmlspecialchars($e->getMessage());
+}
 
-		$file = file_get_contents($link);
-
-		$tmp = explode("\n", $file);
-
-		array_splice($tmp, 0, 1);
-
-		array_splice($tmp, 0, 1);
-
-		
-
-		
-
-		
-
-		//var_dump($tmp);          die();
-
-		return $tmp;
-
-	}*/
-
-	
-
-	$output = $dbm->read("SELECT distinct * FROM year$myYear");
+$output = $dbm->read("SELECT distinct * FROM year$currentYear");
         
         //$result = mysql_query("SELECT * FROM year$myYear",$connection);
         //$output = mysql_fetch_array($result, MYSQL_ASSOC);
@@ -298,14 +182,14 @@
 
 						$val2 = $estrat[$aux1];
 
-						$sql = "INSERT INTO quad$myYear VALUES('$data','$ruota', $estrazione, '$distanza', '$tripla', $val1, $val2)";	
+						$sql = "INSERT INTO quad$currentYear VALUES('$data','$ruota', $estrazione, '$distanza', '$tripla', $val1, $val2)";	
 
 						$dbm->write($sql);
 
 					}
 
 			next($est);
-$i++;
+
                 }	
                 
                                         }
@@ -367,73 +251,69 @@ $i++;
 		if($value == 3 || $value == 6 || $value == 9)	return '3-6-9';
 
 	}
-
 ?>
-	<center>
 
-    	<div class="header">
-        	<img src="img/logo.png" width="30%"/>
+<center>
+    <div class="header">
+        <img src="img/logo.png" width="30%"/>
+    </div>
+    <div class="item" url="estrazioni">
+        <div class="title">estrazioni</div>
+        <div class="content">
+            Elenco di tutte le estrazioni dal 1871 ad oggi.
         </div>
-    	 
-        <div class="item" url="estrazioni">
-        	<div class="title">estrazioni</div>
-            <div class="content">
-            	Elenco di tutte le estrazioni dal 1871 ad oggi.
-            </div>
+    </div>
+    <div class="item" url="quadrature">
+        <div class="title">quadrature</div>
+        <div class="content">
+            Domenico
         </div>
-        <div class="item" url="quadrature">
-        	<div class="title">quadrature</div>
-            <div class="content">
-            	Domenico
-            </div>
+    </div>
+    <div class="item" url="modulo_uno">
+        <div class="title">modulo 1</div>
+        <div class="content">
+            Calcolo di uscite in base a configurazione
         </div>
-        <div class="item" url="modulo_uno">
-        	<div class="title">modulo 1</div>
-            <div class="content">
-            	Calcolo di uscite in base a configurazione
-            </div>
+    </div>
+    <div class="item" url="modulo_due">
+        <div class="title">modulo 2</div>
+        <div class="content">
+            Calcolo delle sestine
         </div>
-        
-         <div class="item" url="modulo_due">
-        	<div class="title">modulo 2</div>
-            <div class="content">
-            	Calcolo delle sestine
-            </div>
+    </div>
+    <div class="item" url="modulo_tre">
+        <div class="title">modulo 3</div>
+        <div class="content">
+            Tabelloni ambi, terne e quaterne
         </div>
-		<div class="item" url="modulo_tre">
-        	<div class="title">modulo 3</div>
-            <div class="content">
-            	Tabelloni ambi, terne e quaterne
-            </div>
+    </div>
+    <div class="item" url="TotaliSestine">
+        <div class="title">Sestine</div>
+        <div class="content">
+            elenco sestine
         </div>
-		<div class="item" url="TotaliSestine">
-        	<div class="title">Sestine</div>
-            <div class="content">
-            	elenco sestine
-            </div>
+    </div>
+    <div class="item" style="margin-top: 30px;" url="elencoSestine">
+        <div class="title">Trova pagine sestine</div>
+        <div class="content">
+            Trova pagine sestine
         </div>
-        <div class="item" style="margin-top: 30px;" url="elencoSestine">
-        	<div class="title">Trova pagine sestine</div>
-            <div class="content">
-            	Trova pagine sestine
-            </div>
+    </div>
+    <div class="item" style="margin-top: 30px;" url="nSestine">
+        <div class="title">Trova terni e quaterne</div>
+        <div class="content">
+            Trova pagine sestine
         </div>
-          <div class="item" style="margin-top: 30px;" url="nSestine">
-        	<div class="title">Trova terni e quaterne</div>
-            <div class="content">
-            	Trova pagine sestine
-            </div>
-        </div>
-    </center>
-    
-    <!------------------------------------------------------------------->
-    <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
-    <script type="text/javascript">
-		$(document).ready(function() {
-        	$('.item').click(function(){
-				window.location.href = $(this).attr('url');
-			});
+    </div>
+</center>
+
+<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.item').click(function(){
+            window.location.href = $(this).attr('url');
         });
-	</script>
+    });
+</script>
 </body>
 </html>

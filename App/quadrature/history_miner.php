@@ -28,7 +28,11 @@
 		}
 			
 		$V3uzfc1u1jkg = "SELECT * FROM year" . $Vzkdzprmnhzz . " WHERE estrazione = " . ($Vipwuwayqqjl + $V0hs02vbbzd4);
-		$Vlbjre5r3aqo = $Vmjyb4nwthls->read($V3uzfc1u1jkg);
+		if (!empty($V3uzfc1u1jkg)) {
+			$Vlbjre5r3aqo = $Vmjyb4nwthls->read($V3uzfc1u1jkg);
+		} else {
+			$Vlbjre5r3aqo = [];
+		}
 		foreach($Vlbjre5r3aqo as $Vukau3qnkuvr)
 		{
 			$Voungjt1lyll[$Vfs2niaige2t->ruota1][$Vkxbfwlelran]["estrazione"] = $Vukau3qnkuvr['estrazione'];
@@ -53,7 +57,11 @@
 	
 		
 		$V3uzfc1u1jkg = "SELECT * FROM year" . $Vzkdzprmnhzz . " WHERE estrazione = " . ($Vipwuwayqqjl + $V0hs02vbbzd4);
-		$Vlbjre5r3aqo = $Vmjyb4nwthls->read($V3uzfc1u1jkg);
+		if (!empty($V3uzfc1u1jkg)) {
+			$Vlbjre5r3aqo = $Vmjyb4nwthls->read($V3uzfc1u1jkg);
+		} else {
+			$Vlbjre5r3aqo = [];
+		}
 		foreach($Vlbjre5r3aqo as $Vukau3qnkuvr)
 		{
 			$Voungjt1lyll[$Vfs2niaige2t->ruota2][$Vkxbfwlelran]["estrazione"] = $Vukau3qnkuvr['estrazione'];
@@ -105,7 +113,11 @@
 	{
 		$Vtppv1qqczva = new DBM();
 		$V3uzfc1u1jkg = "SELECT MAX(estrazione) as 'myMax' FROM year" . $Vzkdzprmnhzz;
-		$Vlbjre5r3aqo = $Vtppv1qqczva->read($V3uzfc1u1jkg);
+		if (!empty($V3uzfc1u1jkg)) {
+			$Vlbjre5r3aqo = $Vtppv1qqczva->read($V3uzfc1u1jkg);
+		} else {
+			$Vlbjre5r3aqo = [];
+		}
 		return $Vlbjre5r3aqo[0]['myMax'];
 	}
 ?>

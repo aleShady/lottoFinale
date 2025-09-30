@@ -1,0 +1,4 @@
+Array
+(
+    [model] => {"year":"2023","ambo":"uniti","tripla":"1-4-7"}
+)

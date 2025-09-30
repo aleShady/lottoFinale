@@ -93,6 +93,7 @@ function btnEsegui_Click() {
     $.ajax({
         url: 'valori_miner.php',
         dataType: 'JSON',
+            type: 'POST',
         data: {
             model: generateModel()
         },

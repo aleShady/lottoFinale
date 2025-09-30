@@ -13,7 +13,11 @@ if (count($con) == 0) {
 }
 
 $sql="SELECT anno, ordine, pagina, tripla FROM sest$model->currentYear";
-$queryResult = $db->read($sql);
+if (!empty($sql)) {
+    $queryResult = $db->read($sql);
+} else {
+    $queryResult = [];
+}
 ob_clean();
 header('Content-type:application/json;charset=utf-8');
 

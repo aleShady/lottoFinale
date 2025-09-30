@@ -4,10 +4,14 @@
 ["sdbuxorjpuvb"] = "sql";
 class DBM {
     private $con;
-    public function DBM() {
-        $this->con = new PDO("mysql:host=localhost;dbname=my_dsantarella", "root", "");
+    public function __construct() {
+        $this->con = new PDO("mysql:host=localhost;dbname=dsantarella", "root", "");
     }
     public function read($sql) {
+        if (empty($sql)) {
+            // Query vuota: restituisci array vuoto
+            return [];
+        }
         $ {
             "GLOBALS"
         }
